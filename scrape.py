@@ -17,7 +17,6 @@ soup = bs(response.text, 'html.parser')
 
 marcas_sel = soup.find('select', {'id': 'ddlModelo'})
 marcas_opt = marcas_sel.find_all('option')
-print(marcas_opt)
 
 marcas = {marca['value']: marca.text for marca in marcas_opt if marca['value'] != ''}
 
@@ -77,6 +76,5 @@ for marca_id, marca_nombre in marcas.items():
             break
         page_index += 1
 
-results_writer.close()
 results_file.close()
 print('TERMINADO')
