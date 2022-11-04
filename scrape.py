@@ -11,16 +11,22 @@ valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
 }
-url = 'https://www.justiciacordoba.gob.ar/justiciacordoba/Servicios/VehiculosSecuestrados.aspx'
-response = requests.get(url, headers=headers)
-soup = bs(response.text, 'html.parser')
 
-marcas_sel = soup.find('select', {'id': 'ddlModelo'})
-marcas_opt = marcas_sel.find_all('option')
+# ==================================================
+# Obtener la lista de los IDS de las marcas
+# No es necesario, si se manda el ID nulo el API responde igual ...
+# ==================================================
+# url = 'https://www.justiciacordoba.gob.ar/justiciacordoba/Servicios/VehiculosSecuestrados.aspx'
+# response = requests.get(url, headers=headers)
+# soup = bs(response.text, 'html.parser')
+# marcas_sel = soup.find('select', {'id': 'ddlModelo'})
+# marcas_opt = marcas_sel.find_all('option')
+# marcas = {marca['value']: marca.text for marca in marcas_opt if marca['value'] != ''}
+# ==================================================
+marcas = {'': ''}
 
-marcas = {marca['value']: marca.text for marca in marcas_opt if marca['value'] != ''}
-
-page_size = 100
+# eL api NO respeta el parametro, son siempre 10 ...
+page_size = 10
 params = {
     "idModelo": None,
     "pageSize": page_size,
@@ -31,8 +37,8 @@ params = {
 
 results_file = open('resultados.csv', 'w')
 fieldnames = [
-    "Marca",
-    "Marca ID",
+    # "Marca",
+    # "Marca ID",
     "IDRegistro",
     "TipoVehiculo",
     "Modelo",
@@ -49,8 +55,10 @@ post_url = 'https://www.justiciacordoba.gob.ar/justiciacordoba/Servicios/Vehicul
 for marca_id, marca_nombre in marcas.items():
     page_index = 0
     while True:
-        print(f'Buscando {marca_nombre}-{marca_id}-{page_index} ...')
-        file_name = f'{marca_nombre}.{marca_id}-{page_index}.json'
+        
+        # file_name = f'{marca_nombre}.{marca_id}-{page_index}.json'
+        file_name = f'page-{page_index}.json'
+        print(f'Buscando {file_name} ...')
         file_name = f'data/' + ''.join(c for c in file_name if c in valid_chars)
         if os.path.exists(file_name):
             print(f'Ya existe {file_name}')
@@ -67,10 +75,10 @@ for marca_id, marca_nombre in marcas.items():
             sleep(2)
 
         for auto in data['d']['ObjectData']:
-            auto.update({
-                "Marca": marca_nombre,
-                "Marca ID": marca_id,
-            })
+            # auto.update({
+            #     "Marca": marca_nombre,
+            #     "Marca ID": marca_id,
+            # })
             results_writer.writerow(auto)
         if len(data['d']['ObjectData']) < page_size:
             break
