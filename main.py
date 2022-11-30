@@ -4,7 +4,6 @@ import json
 from os import listdir
 from operator import itemgetter
 
-
 #Variables
 archivos = listdir('data')
 total = len(archivos)
@@ -13,14 +12,12 @@ total = len(archivos)
 destinos = []
 repeticiones = {}
 
-
-
 #Blucle recorrido de archivos .Json Carpeta "Data"
 for archivo in archivos: 
-    ruta = 'data/' + archivo   
+    ruta = 'data/' + archivo
 
     #Apertura de archivos .Json
-    with open (ruta) as contenido:
+    with open(ruta) as contenido:
         json_data = json.load(contenido)
 
         #almacenas el array de vehiculos en una variable
@@ -28,46 +25,24 @@ for archivo in archivos:
 
         #Lectura de indice 'Destino' y agregado a lista 'Destinos'
         for vehiculo in vehiculos:
-            destino = (vehiculo['Destino'])
+            destino = vehiculo['Destino']
             destinos.append(destino)
 
-        #Recorrido por lista 'destinos' y conteo de entrega a cada destino
-        for cantidad in destinos:
-            if cantidad in repeticiones:
-                repeticiones[cantidad] +=1
-            else:
-                repeticiones[cantidad] = 0
-                repeticiones_asc = sorted(repeticiones.items(), key=itemgetter(1))
-                
+#Recorrido por lista 'destinos' y conteo de entrega a cada destino
+for destino in destinos:
+    if destino in repeticiones:
+        repeticiones[destino] +=1
+    else:
+        repeticiones[destino] = 1
 
-        #Organiza de mayor a menor
-        #repeticiones = sorted(repeticiones.items(), key=operator.itemgetter(1), reverse=True)
+repeticiones_asc = sorted(repeticiones.items(), key=itemgetter(1), reverse=True)
+
+#Organiza de mayor a menor
+#repeticiones = sorted(repeticiones.items(), key=operator.itemgetter(1), reverse=True)
 #print (repeticiones)
-print(repeticiones_asc)
-        #for name in enumerate(repeticiones):
-
-       
-        
-            
-
-
-
-
-
-#print (sorted(repeticiones.items()))
-#print (repeticiones['MUNICIPALIDAD - CHILIBROSTE'])
-
-
-
-            
-
-
-
-
-        
-
-           
-        
-
-
-    
+print('RESULTADOS')
+c = 0
+for res in repeticiones_asc:
+    c += 1
+    if c < 20:
+        print(f'{res[0]}: {res[1]}')
